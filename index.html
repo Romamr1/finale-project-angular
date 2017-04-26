@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="UTF-8">
+  <title>Trello</title> 
+  <base href="/">   
+  <link rel="stylesheet" type="text/css" href="css/jira.css">
+  <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
+  <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/6.0.0/normalize.css">
+  <link rel="stylesheet" href="/node_modules/angular-material/angular-material.css">
+</head>
+<body ng-cloak>
+
+	<header>
+		<div class="row">
+			<h1 class="app-name left">Trello</h1>{{currentUser}}
+		</div>
+	</header>	
+	
+	<ui-view>Loading . . .</ui-view>	
+	
+	
+	<!-- <script src="/node_modules/angular-aria/angular-aria.js"></script>  -->
+    <script src="public/bundle.js"></script>
+    <script src="/node_modules/angular-animate/angular-animate.js"></script> 
+    <script src="/node_modules/angular-material/angular-material.js"></script>
+
+</body>
+</html>

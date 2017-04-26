@@ -1,0 +1,71 @@
+<section id="lists-container" 
+			 class="lists-container">
+		<div class="row">
+			<section class="list list-inline"
+			         ng-repeat="list in ctrl.lists"
+			         ng-controller="ListCtrl as ListCtrl">
+				<h1>{{list.listName}}</h1>	
+				
+				<div class = "card" 
+				     ng-repeat="card in ListCtrl.getCards(list)"
+					 ng-controller="CardCtrl as CardCtrl"
+					 >
+					
+					<div ng-if='!CardCtrl.isEditing'
+						draggable="true"
+					 	onDragStart="CardCtrl.drag()">
+						{{card.description}}
+					
+						<div ng-click="CardCtrl.editCard(card)"
+							class="edit-small edit-card hand">
+						</div>	 
+						 
+						<div ng-click = "CardCtrl.deleteCard(card)"
+							class = "remove-small remove-card hand">
+						</div>
+					</div>
+					<div ng-if="CardCtrl.isEditing">					     
+						<form ng-submit="CardCtrl.updateCard(card)">						      
+							<input type="text" 
+							       close-editing
+								   is-editing="CardCtrl.isEditing"
+								   ng-model="CardCtrl.editingCard.description"></input>
+							<select class="select-list"
+							        ng-model="CardCtrl.editingCard.list_id"
+									ng-change="CardCtrl.updateCard()"
+									ng-options="list.id as list.listName for list in ctrl.lists">	
+							</select>
+							<button class="button" ng-click="CardCtrl.updateCard(card)">save</button>
+						</form>
+					</div>
+				</div>
+				
+				<a ng-click="ListCtrl.removeList(list)" class="hand">
+					<div class="remove remove-list"></div>
+				</a>
+				<a class="hand">					
+					<div class="edit-list">View/Edit</div>
+				</a>	
+				
+				<section class="new-card">
+					<form ng-submit="ListCtrl.createCard(list)">
+						<input type="text"
+						       ng-model="ListCtrl.cardDescription"
+							   class="card-input"
+							   placeholder="New card">
+						</input>
+					</form>
+				</section>
+				
+			</section>
+								
+			<section class = "list new-list list-inline">
+			
+				<form ng-submit="ctrl.addList()">
+					<input type = "text" ng-model="ctrl.listName">
+					</input>
+					
+				</form>
+			<section>
+		</div>		
+	</section>
