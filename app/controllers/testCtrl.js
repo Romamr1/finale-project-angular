@@ -4,7 +4,11 @@ export default class CardCtrl{
     $scope.showAdvanced = function(ev) {
       console.log($mdDialog);
       $mdDialog.show({
-        controller: function(){},
+        controller: function($scope){
+          scope.answer = function(){
+            console.log('Ive answered this');
+          }
+        },
         templateUrl: 'app/controllers/dialog1.tmpl.html',
         parent: angular.element(document.body),
         targetEvent: ev,
