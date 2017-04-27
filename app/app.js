@@ -9,6 +9,7 @@ import CardCtrl from './controllers/cardCtrl.js';
 import closeEditing from './directives/closeEditing.directive.js';
 import ngMaterial from 'angular-material';
 import ngAnimate from 'angular-animate';
+import LogOutCtrl from 'states/login-states/logOutCtrl.js';
 
 angular.module('app',[	
   	'ngMaterial',
@@ -16,6 +17,7 @@ angular.module('app',[
   	uiRouter,
 ])
 	.config(routeConfig)
+	.controller('LogOutCtrl', LogOutCtrl)
 	.service('ListService', ListService)
 	.service('CardService', CardService)
 	.service('UserService', UserService)
@@ -24,8 +26,7 @@ angular.module('app',[
 	.directive('closeEditing', closeEditing)
 	// .run(function ($rootScope, $state){
 	// 	$rootScope.$on('$stateChangeError', function(event, toState, toParams,fromState){
-	// 		event.preventDefault();
-	// 		console.log(event);
+	// 		event.preventDefault();	// 		
 	// 		$state.go('login');
 	// 	})
 	// })		

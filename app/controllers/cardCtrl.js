@@ -20,19 +20,19 @@ export default class CardCtrl{
 			this.isEditing = false;			
 		};
 
-		this.drag = function(ev) {
-			concole.log(ev.target);	
-			elem = ev.target;		
-		};
+		// this.drag = function(ev) {
+		// 	concole.log(ev.target);	
+		// 	elem = ev.target;		
+		// };
 
-		this.drop = function(ev) {
-		  ev.preventDefault();   
-		  ev.target.parentNode.insertBefore(elem, ev.target);
-		}  
+		// this.drop = function(ev) {
+		//   ev.preventDefault();   
+		//   ev.target.parentNode.insertBefore(elem, ev.target);
+		// }  
 
-		this.allowDrop = function(ev) {
-		  ev.preventDefault();
-		} 	
+		// this.allowDrop = function(ev) {
+		//   ev.preventDefault();
+		// } 	
  					
 	}	
 }

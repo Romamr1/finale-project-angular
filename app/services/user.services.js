@@ -17,12 +17,7 @@ let USERS = [
 	},
 	{
 		id: 2,
-		name: 'vasia',
-		password: 'vasia'
-	},
-	{
-		id: 3,
-		name: 'petia',
-		password: 'petia'
+		name: 'user2',
+		password: 'user2'
 	}
 ];

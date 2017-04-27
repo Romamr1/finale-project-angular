@@ -11,19 +11,15 @@
 </head>
 <body ng-cloak>
 
-	<header>
+	<header ng-controller="LogOutCtrl as LogOutCtrl">
 		<div class="row">
-			<h1 class="app-name left">Trello</h1>{{currentUser}}
+			<h1 class="app-name left">Trello</h1>			
+			<h6 class="logout remove-card hand" ng-click=(LogOutCtrl.logOut())>LogOut</h6>
 		</div>
+
 	</header>	
 	
-	<ui-view>Loading . . .</ui-view>	
-	
-	
-	<!-- <script src="/node_modules/angular-aria/angular-aria.js"></script>  -->
-    <script src="public/bundle.js"></script>
-    <script src="/node_modules/angular-animate/angular-animate.js"></script> 
-    <script src="/node_modules/angular-material/angular-material.js"></script>
-
+	<ui-view>Loading . . .</ui-view>
+    <script src="public/bundle.js"></script>   
 </body>
 </html>

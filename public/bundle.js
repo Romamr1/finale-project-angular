@@ -66,37 +66,40 @@
 	
 	var _listCtrl2 = _interopRequireDefault(_listCtrl);
 	
-	var _cardServices = __webpack_require__(12);
+	var _cardServices = __webpack_require__(13);
 	
 	var _cardServices2 = _interopRequireDefault(_cardServices);
 	
-	var _userServices = __webpack_require__(13);
+	var _userServices = __webpack_require__(14);
 	
 	var _userServices2 = _interopRequireDefault(_userServices);
 	
-	var _cardCtrl = __webpack_require__(14);
+	var _cardCtrl = __webpack_require__(15);
 	
 	var _cardCtrl2 = _interopRequireDefault(_cardCtrl);
 	
-	var _closeEditingDirective = __webpack_require__(15);
+	var _closeEditingDirective = __webpack_require__(16);
 	
 	var _closeEditingDirective2 = _interopRequireDefault(_closeEditingDirective);
 	
-	var _angularMaterial = __webpack_require__(16);
+	var _angularMaterial = __webpack_require__(17);
 	
 	var _angularMaterial2 = _interopRequireDefault(_angularMaterial);
 	
-	var _angularAnimate = __webpack_require__(17);
+	var _angularAnimate = __webpack_require__(18);
 	
 	var _angularAnimate2 = _interopRequireDefault(_angularAnimate);
 	
+	var _logOutCtrl = __webpack_require__(23);
+	
+	var _logOutCtrl2 = _interopRequireDefault(_logOutCtrl);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_angular2.default.module('app', ['ngMaterial', 'ngAnimate', _angularUiRouter2.default]).config(_routerConfig2.default).service('ListService', _listServices2.default).service('CardService', _cardServices2.default).service('UserService', _userServices2.default).controller('ListCtrl', _listCtrl2.default).controller('CardCtrl', _cardCtrl2.default).directive('closeEditing', _closeEditingDirective2.default);
+	_angular2.default.module('app', ['ngMaterial', 'ngAnimate', _angularUiRouter2.default]).config(_routerConfig2.default).controller('LogOutCtrl', _logOutCtrl2.default).service('ListService', _listServices2.default).service('CardService', _cardServices2.default).service('UserService', _userServices2.default).controller('ListCtrl', _listCtrl2.default).controller('CardCtrl', _cardCtrl2.default).directive('closeEditing', _closeEditingDirective2.default);
 	// .run(function ($rootScope, $state){
 	// 	$rootScope.$on('$stateChangeError', function(event, toState, toParams,fromState){
-	// 		event.preventDefault();
-	// 		console.log(event);
+	// 		event.preventDefault();	// 		
 	// 		$state.go('login');
 	// 	})
 	// })
@@ -38272,13 +38275,28 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	function DialogController($scope, $mdDialog) {
+	  $scope.hide = function () {
+	    $mdDialog.hide();
+	  };
+	
+	  $scope.cancel = function () {
+	    console.log('i3n');
+	    $mdDialog.cancel();
+	  };
+	
+	  $scope.answer = function (answer) {
+	    $mdDialog.hide(answer);
+	  };
+	};
+	
 	var CardCtrl = function CardCtrl($scope, $mdDialog) {
 	  _classCallCheck(this, CardCtrl);
 	
 	  $scope.showAdvanced = function (ev) {
 	    console.log($mdDialog);
 	    $mdDialog.show({
-	      controller: function controller() {},
+	      controller: DialogController,
 	      templateUrl: 'app/controllers/dialog1.tmpl.html',
 	      parent: angular.element(document.body),
 	      targetEvent: ev,
@@ -38306,7 +38324,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var LoginController = function LoginController($rootScope, UserService, $state) {
+	var LoginController = function LoginController($rootScope, UserService, $state, ListService, CardService) {
 		var _this = this;
 	
 		_classCallCheck(this, LoginController);
@@ -38317,6 +38335,9 @@
 			for (var i = 0; i < _this.users.length; i++) {
 				if (_this.users[i].name === _this.user.name && _this.users[i].password === _this.user.password) {
 					$rootScope.currentUser = _this.users[i];
+					ListService.currentUser = _this.users[i];
+					CardService.currentUser = _this.users[i];
+					UserService.urrentUser = _this.users[i];
 					$state.go('lists');
 				}
 			}
@@ -38355,20 +38376,27 @@
 		_createClass(ListService, [{
 			key: 'getLists',
 			value: function getLists() {
-				return lists;
+				return USERLISTS[this.currentUser.id - 1].lists;
 			}
 		}, {
 			key: 'addList',
 			value: function addList(listName) {
-				lists.push({
+				USERLISTS[this.currentUser.id - 1].lists.push({
 					id: _lodash2.default.uniqueId('list_'),
 					listName: listName
 				});
 			}
 		}, {
 			key: 'removeList',
-			value: function removeList(list) {
-				_lodash2.default.pull(lists, list);
+			value: function removeList(list, cards) {
+				if (cards.length > 0) {
+					var confirmRemove = confirm('You have cards in this list! Remove this List?');
+					if (confirmRemove) {
+						_lodash2.default.pull(USERLISTS[this.currentUser.id - 1].lists, list);
+					}
+				} else {
+					_lodash2.default.pull(USERLISTS[this.currentUser.id - 1].lists, list);
+				}
 			}
 		}]);
 	
@@ -38378,15 +38406,30 @@
 	exports.default = ListService;
 	
 	
-	var lists = [{
-		id: 1,
-		listName: 'Todo'
+	var USERLISTS = [{
+		userId: 1,
+		lists: [{
+			id: 1,
+			listName: 'Todo'
+		}, {
+			id: 2,
+			listName: 'Doing'
+		}, {
+			id: 3,
+			listName: 'Done'
+		}]
 	}, {
-		id: 2,
-		listName: 'Doing'
-	}, {
-		id: 3,
-		listName: 'Done'
+		userId: 2,
+		lists: [{
+			id: 1,
+			listName: 'U2Todo'
+		}, {
+			id: 2,
+			listName: 'U2Doing'
+		}, {
+			id: 3,
+			listName: 'U2Done'
+		}]
 	}];
 
 /***/ }),
@@ -49199,6 +49242,70 @@
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _dialogCtrl = __webpack_require__(12);
+	
+	var _dialogCtrl2 = _interopRequireDefault(_dialogCtrl);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var ListCtrl = function ListCtrl(ListService, CardService, $mdDialog) {
+		_classCallCheck(this, ListCtrl);
+	
+		this.removeList = function (list) {
+			var cards = this.getCards(list);
+			ListService.removeList(list, cards);
+		};
+		this.getCards = function (list) {
+			return CardService.getCards(list);
+		};
+	
+		this.createCard = function (list) {
+			CardService.createCard(list, this.cardTitle);
+			this.cardTitle = '';
+		};
+	
+		// function setTimeCheck() {
+		// 	let checkCards = CardService.getCards(ListService.getLists()[0]);
+		// 	let currentDate = Date.now();
+		// 		console.log('checkCards[i].title');
+		// 	for (let i=0; i<checkCards.length; i++){
+		// 		if (checkCards[i].finishDate <= currentDate){
+		// 			alert('You have overdue card');
+		// 			console.log(checkCards[i].title);
+		// 		}
+		// 	}
+		// 	setTimeout(setTimeCheck, 30000);
+		// };
+	
+		// setTimeout(setTimeCheck, 30000);
+	
+		this.showList = function (ev, list) {
+			ListService.currentList = list;
+			$mdDialog.show({
+				controller: _dialogCtrl2.default,
+				templateUrl: 'app/controllers/dialog1.tmpl.html',
+				parent: angular.element(document.body),
+				targetEvent: ev,
+				clickOutsideToClose: true,
+				fullscreen: this.customFullscreen
+			});
+		};
+	};
+	
+	exports.default = ListCtrl;
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -49209,26 +49316,40 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var ListCtrl = function ListCtrl(ListService, CardService) {
-		_classCallCheck(this, ListCtrl);
+	var DialogController = function DialogController($scope, $mdDialog, ListService, CardService) {
+		_classCallCheck(this, DialogController);
 	
-		this.removeList = function (list) {
-			ListService.removeList(list);
-		};
-		this.getCards = function (list) {
+		$scope.list = ListService.currentList;
+	
+		$scope.lists = ListService.getLists();
+	
+		$scope.getCards = function (list) {
 			return CardService.getCards(list);
 		};
 	
-		this.createCard = function (list) {
-			CardService.createCard(list, this.cardDescription);
-			this.cardDescription = '';
+		$scope.createCard = function (list) {
+			CardService.createCard(list, $scope.cardTitle);
+			$scope.cardTitle = '';
+		};
+	
+		$scope.hide = function () {
+			$mdDialog.hide();
+		};
+	
+		$scope.cancel = function () {
+			$mdDialog.cancel();
+		};
+	
+		$scope.answer = function (answer) {
+			$mdDialog.hide(answer);
 		};
 	};
 	
-	exports.default = ListCtrl;
+	exports.default = DialogController;
+	;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49243,6 +49364,10 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
+	var _angular = __webpack_require__(1);
+	
+	var _angular2 = _interopRequireDefault(_angular);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -49252,30 +49377,44 @@
 			_classCallCheck(this, CardService);
 		}
 	
+		// checkfunction () {
+		// 	let checkCards = USERCARDS[this.currentUser.id - 1].cards;
+		// 	currentDate = Date.now();
+		// 	for (let i=0; i<checkCards.length; i++){
+		// 		if (checkCards[i].finishDate >= currentDate){
+		// 			alert('You have overdue card');
+		// 		}
+		// 	}
+	
+		// }
+	
+	
 		_createClass(CardService, [{
 			key: 'getCards',
 			value: function getCards(list) {
-				return _lodash2.default.filter(cards, { list_id: list.id });
+				return _lodash2.default.filter(USERCARDS[this.currentUser.id - 1].cards, { list_id: list.id });
 			}
 		}, {
 			key: 'createCard',
-			value: function createCard(list, cardDescription) {
-				cards.push({
+			value: function createCard(list, cardTitle) {
+				USERCARDS[this.currentUser.id - 1].cards.push({
 					id: _lodash2.default.uniqueId('card_'),
-					description: cardDescription,
+					title: cardTitle,
 					list_id: list.id
 				});
 			}
 		}, {
 			key: 'deleteCard',
 			value: function deleteCard(card) {
-				return _lodash2.default.pull(cards, card);
+				return _lodash2.default.pull(USERCARDS[this.currentUser.id - 1].cards, card);
 			}
 		}, {
 			key: 'updateCard',
 			value: function updateCard(updatingCard) {
-				var card = _lodash2.default.findWhere(cards, { id: updatingCard.id });
+				var card = _lodash2.default.findWhere(USERCARDS[this.currentUser.id - 1].cards, { id: updatingCard.id });
+				card.title = updatingCard.title;
 				card.description = updatingCard.description;
+				card.finishDate = updatingCard.finishDate;
 				card.list_id = updatingCard.list_id;
 			}
 		}]);
@@ -49286,22 +49425,58 @@
 	exports.default = CardService;
 	
 	
-	var cards = [{
-		id: 1,
-		description: 'Fix bug in player',
-		list_id: 1
+	var USERCARDS = [{
+		userId: 1,
+		cards: [{
+			id: 1,
+			title: 'Fix bug in player',
+			description: 'Some Descriptionfor fix bug',
+			priority: 2,
+			finishDate: new Date(2017, 4, 28),
+			list_id: 1
+		}, {
+			id: 2,
+			title: 'Add feature with D3',
+			description: 'Some Descriptionfor D3',
+			priority: 1,
+			finishDate: new Date(2017, 4, 30),
+			list_id: 2
+		}, {
+			id: 3,
+			title: 'Learn AngularJS',
+			description: 'Some Descriptionfor D3',
+			finishDate: new Date(2017, 4, 29),
+			priority: 2,
+			list_id: 3
+		}]
 	}, {
-		id: 2,
-		description: 'Add feature with D3',
-		list_id: 2
-	}, {
-		id: 3,
-		description: 'Learn AngularJS',
-		list_id: 3
+		userId: 2,
+		cards: [{
+			id: 1,
+			title: 'U2 Fix bug in player',
+			description: 'Some Descriptionfor fix bug',
+			finishDate: new Date(2017, 4, 28),
+			priority: 2,
+			list_id: 1
+		}, {
+			id: 2,
+			title: 'U2 Add feature with D3',
+			description: 'Some Descriptionfor D3',
+			finishDate: new Date(2017, 4, 28),
+			priority: 1,
+			list_id: 2
+		}, {
+			id: 3,
+			title: 'U2 Learn AngularJS',
+			description: 'Some Descriptionfor D3',
+			finishDate: new Date(2017, 4, 29),
+			priority: 2,
+			list_id: 3
+		}]
 	}];
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49344,16 +49519,12 @@
 		password: 'user'
 	}, {
 		id: 2,
-		name: 'vasia',
-		password: 'vasia'
-	}, {
-		id: 3,
-		name: 'petia',
-		password: 'petia'
+		name: 'user2',
+		password: 'user2'
 	}];
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -49387,25 +49558,25 @@
 			this.isEditing = false;
 		};
 	
-		this.drag = function (ev) {
-			concole.log(ev.target);
-			elem = ev.target;
-		};
+		// this.drag = function(ev) {
+		// 	concole.log(ev.target);	
+		// 	elem = ev.target;		
+		// };
 	
-		this.drop = function (ev) {
-			ev.preventDefault();
-			ev.target.parentNode.insertBefore(elem, ev.target);
-		};
+		// this.drop = function(ev) {
+		//   ev.preventDefault();   
+		//   ev.target.parentNode.insertBefore(elem, ev.target);
+		// }  
 	
-		this.allowDrop = function (ev) {
-			ev.preventDefault();
-		};
+		// this.allowDrop = function(ev) {
+		//   ev.preventDefault();
+		// } 	
 	};
 	
 	exports.default = CardCtrl;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -49442,33 +49613,33 @@
 	};
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// Should already be required, here for clarity
 	__webpack_require__(1);
 	
 	// Load Angular and dependent libs
-	__webpack_require__(17);
-	__webpack_require__(19);
+	__webpack_require__(18);
+	__webpack_require__(20);
 	
 	// Now load Angular Material
-	__webpack_require__(21);
+	__webpack_require__(22);
 	
 	// Export namespace
 	module.exports = 'ngMaterial';
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(18);
+	__webpack_require__(19);
 	module.exports = 'ngAnimate';
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 	/**
@@ -53629,15 +53800,15 @@
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(20);
+	__webpack_require__(21);
 	module.exports = 'ngAria';
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 	/**
@@ -54046,7 +54217,7 @@
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 	/*!
@@ -90054,6 +90225,33 @@
 	
 	
 	})(window, window.angular);;window.ngMaterial={version:{full: "1.1.4"}};
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var LogOutController = function LogOutController($rootScope, $state, ListService, CardService, UserService) {
+		_classCallCheck(this, LogOutController);
+	
+		this.logOut = function () {
+			$rootScope.currentUser = null;
+			ListService.currentUser = null;
+			CardService.currentUser = null;
+			UserService.urrentUser = null;
+			$state.go('login');
+		};
+	};
+	
+	exports.default = LogOutController;
+	;
 
 /***/ })
 /******/ ]);

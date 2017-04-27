@@ -11,46 +11,27 @@
 					 ng-controller="CardCtrl as CardCtrl"
 					 >
 					
-					<div ng-if='!CardCtrl.isEditing'
-						draggable="true"
+					<div draggable="true"
 					 	onDragStart="CardCtrl.drag()">
-						{{card.description}}
-					
-						<div ng-click="CardCtrl.editCard(card)"
-							class="edit-small edit-card hand">
-						</div>	 
+						{{card.title}}						 
 						 
 						<div ng-click = "CardCtrl.deleteCard(card)"
 							class = "remove-small remove-card hand">
 						</div>
-					</div>
-					<div ng-if="CardCtrl.isEditing">					     
-						<form ng-submit="CardCtrl.updateCard(card)">						      
-							<input type="text" 
-							       close-editing
-								   is-editing="CardCtrl.isEditing"
-								   ng-model="CardCtrl.editingCard.description"></input>
-							<select class="select-list"
-							        ng-model="CardCtrl.editingCard.list_id"
-									ng-change="CardCtrl.updateCard()"
-									ng-options="list.id as list.listName for list in ctrl.lists">	
-							</select>
-							<button class="button" ng-click="CardCtrl.updateCard(card)">save</button>
-						</form>
-					</div>
+					</div>					
 				</div>
 				
 				<a ng-click="ListCtrl.removeList(list)" class="hand">
 					<div class="remove remove-list"></div>
 				</a>
-				<a class="hand">					
+				<a class="hand" ng-click="ListCtrl.showList($event, list)">					
 					<div class="edit-list">View/Edit</div>
 				</a>	
 				
 				<section class="new-card">
 					<form ng-submit="ListCtrl.createCard(list)">
 						<input type="text"
-						       ng-model="ListCtrl.cardDescription"
+						       ng-model="ListCtrl.cardTitle"
 							   class="card-input"
 							   placeholder="New card">
 						</input>
